@@ -71,7 +71,7 @@ fun AppScaffold() {
                 Tab.PAGE1 -> Page1()
                 Tab.PAGE2 -> Page2()
                 Tab.PAGE3 -> Page3()
-                Tab.PAGE4 -> MockScreen()
+                Tab.PAGE4 -> PlannerScreen()
             }
         }
     }
