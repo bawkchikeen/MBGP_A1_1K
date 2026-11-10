@@ -67,7 +67,7 @@ fun PlannerScreen(modifier: Modifier = Modifier) {
     // ---- Part A -------------------------------------------------------------
     // TODO 1: this list can never change. Hold it as state instead:
     //         val tasks = remember { sampleTasks.toMutableStateList() }
-    val tasks = sampleTasks
+    val tasks = remember {sampleTasks.toMutableStateList()}
 
     Column(modifier
         .fillMaxSize()
@@ -78,8 +78,8 @@ fun PlannerScreen(modifier: Modifier = Modifier) {
         //         The stats and the list now read the same state. That is why
         //         the state lives here, above both of them.
         Row(Modifier.fillMaxWidth()) {
-            PlannerStat("8", "done", Modifier.weight(1f))
-            PlannerStat("4", "active", Modifier.weight(1f))
+            PlannerStat(tasks.count{ it.done }.toString(), "done", Modifier.weight(1f))
+            PlannerStat(tasks.count{ !it.done }.toString(), "active", Modifier.weight(1f))
         }
 
         Spacer(Modifier.height(24.dp))
@@ -96,7 +96,10 @@ fun PlannerScreen(modifier: Modifier = Modifier) {
                 //         modifier = Modifier.animateItem()
                 //         Tap "Add task". Then delete key = { it.id } above and try again.
                 //         What changed, and why?
-                PlannerTaskRow(task)
+                    PlannerTaskRow(task, onToggle = {
+                        tasks[tasks.indexOf(task)] = task.copy(done = !task.done)
+                    }
+                )
             }
         }
 
@@ -127,9 +130,9 @@ private fun PlannerStat(value: String, label: String, modifier: Modifier = Modif
 // TODO 2a: add a parameter  onToggle: () -> Unit  and call it when the row is
 //          tapped: modifier.clickable { onToggle() }
 //          The row does not change the task. It only reports the tap.
-@Composable
-private fun PlannerTaskRow(task: Task, modifier: Modifier = Modifier) {
 
+@Composable
+private fun PlannerTaskRow(task: Task, modifier: Modifier = Modifier, onToggle: () -> Unit) {
     // TODO 9: fade the dot's colour when a task is ticked, instead of snapping:
     //         val dotColour by animateColorAsState(
     //             if (task.done) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
@@ -139,6 +142,7 @@ private fun PlannerTaskRow(task: Task, modifier: Modifier = Modifier) {
     Row(
         modifier
             .fillMaxWidth()
+            .clickable { onToggle() }
             .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
